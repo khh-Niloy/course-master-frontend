@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useStudentRegisterMutation } from "@/redux/features/auth/auth.api";
+import { useUserRegisterMutation } from "@/redux/features/auth/auth.api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -48,7 +48,7 @@ export function SignupForm({
     resolver: zodResolver(signupSchema),
   });
 
-  const [studentRegister, { isLoading }] = useStudentRegisterMutation();
+  const [userRegister, { isLoading }] = useUserRegisterMutation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -61,9 +61,9 @@ export function SignupForm({
       return;
     }
     try {
-      const res = await studentRegister(payload).unwrap();
+      const res = await userRegister(payload).unwrap();
       if(res.success){
-        toast.success("Student registered successfully");
+        toast.success("User registered successfully");
         router.push("/");
       }
     } catch (error: any) {
