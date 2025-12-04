@@ -6,11 +6,11 @@ const routes = {
       items: [
         {
           title: "All Courses",
-          url: "#",
+          url: "/dashboard/all-courses",
         },
         {
           title: "Add Course",
-          url: "#",
+          url: "/dashboard/add-course",
         },
       ],
     },
@@ -30,7 +30,39 @@ const routes = {
       items: [
         {
           title: "All Assignments",
-          url: "#",
+          url: "/dashboard/all-assignments",
+        },
+        {
+          title: "Add Assignment",
+          url: "/dashboard/add-assignment",
+        },
+      ],
+    },
+    {
+      title: "Quiz Management",
+      url: "#",
+      items: [
+        {
+          title: "All Quizzes",
+          url: "/dashboard/all-quizzes",
+        },
+        {
+          title: "Add Quiz",
+          url: "/dashboard/add-quiz",
+        },
+      ],
+    },
+    {
+      title: "Batch Management",
+      url: "#",
+      items: [
+        {
+          title: "All Batches",
+          url: "/dashboard/all-batches",
+        },
+        {
+          title: "Add Batch",
+          url: "/dashboard/add-batch",
         },
       ],
     },
