@@ -20,12 +20,13 @@ export const courseApi = baseApi.injectEndpoints({
       providesTags: ["Course"],
     }),
     
+    // Note: This function uses course slug, not ID (backend route expects slug)
     getCourseById: builder.query({
-      query: (id) => ({
-        url: `/courses/${id}`,
+      query: (slug) => ({
+        url: `/courses/${slug}`, // Backend expects slug: GET /courses/:slug
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Course", id }],
+      providesTags: (result, error, slug) => [{ type: "Course", id: slug }],
     }),
     
     updateCourse: builder.mutation({

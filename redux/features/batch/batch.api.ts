@@ -20,6 +20,7 @@ export const batchApi = baseApi.injectEndpoints({
         params: params,
       }),
       providesTags: ["Batch"],
+      keepUnusedDataFor: 0, // Don't cache for role switching
     }),
     
     // GET endpoint for fetching batches by course

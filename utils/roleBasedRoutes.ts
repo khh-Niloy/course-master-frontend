@@ -20,7 +20,11 @@ const routes = {
       items: [
         {
           title: "All Enrollments",
-          url: "#",
+          url: "/dashboard/all-enrollments",
+        },
+        {
+          title: "Add Enrollment",
+          url: "/dashboard/add-enrollment",
         },
       ],
     },
@@ -69,12 +73,16 @@ const routes = {
   ],
   student: [
     {
-      title: "My Courses",
+      title: "My Learning",
       url: "#",
       items: [
         {
-          title: "Courses",
-          url: "#",
+          title: "My Enrollments",
+          url: "/dashboard/my-enrollments",
+        },
+        {
+          title: "My Progress",
+          url: "/dashboard/my-progress",
         },
       ],
     },
