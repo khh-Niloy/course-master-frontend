@@ -10,6 +10,7 @@ import { useAddEnrollmentMutation } from "@/redux/features/enrollment/enrollment
 import { useGetMeQuery } from "@/redux/features/auth/auth.api";
 import { BookOpenIcon, ClockIcon, UsersIcon, StarIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
   const { data: batchesData } = useGetAllBatchesQuery({});
   const { data: meData } = useGetMeQuery(undefined);
   const [addEnrollment, { isLoading: enrollmentLoading }] = useAddEnrollmentMutation();
+  const router = useRouter();
 
   const courses = coursesData?.data || [];
   const batches = batchesData?.data || [];
@@ -25,7 +27,7 @@ export default function Home() {
 
   const handleEnrollNow = async (courseId: string) => {
     if (!user) {
-      toast.error("Please login to enroll in courses");
+      router.push("/login");
       return;
     }
 
