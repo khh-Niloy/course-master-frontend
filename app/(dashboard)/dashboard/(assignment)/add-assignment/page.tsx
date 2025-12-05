@@ -30,9 +30,7 @@ const assignmentSchema = z.object({
     .min(1, "Instructions are required")
     .min(10, "Instructions must be at least 10 characters")
     .max(1000, "Instructions must be less than 1000 characters"),
-  type: z.enum(["drive_link", "text"], {
-    required_error: "Assignment type is required",
-  }),
+  type: z.enum(["drive_link", "text"]),
 });
 
 type AssignmentFormData = z.infer<typeof assignmentSchema>;

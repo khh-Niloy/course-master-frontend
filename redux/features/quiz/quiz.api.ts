@@ -32,78 +32,39 @@ export const quizApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, { id }) => [{ type: "Quiz", id }, "Quiz"],
     }),
     
-    // getQuizById: builder.query({
-    //   query: (id) => ({
-    //     url: `/quizzes/${id}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: (result, error, id) => [{ type: "Quiz", id }],
-    // }),
+    getQuizById: builder.query({
+      query: (id) => ({
+        url: `/quizzes/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Quiz", id }],
+    }),
     
-    // updateQuiz: builder.mutation({
-    //   query: ({ id, data }) => ({
-    //     url: `/quizzes/${id}`,
-    //     method: "PUT",
-    //     data: data,
-    //   }),
-    //   invalidatesTags: (result, error, { id }) => [{ type: "Quiz", id }],
-    // }),
+    // Quiz Results endpoints
+    submitQuizResult: builder.mutation({
+      query: (data) => ({
+        url: `/quizzes/${data.quizId}/submit`,
+        method: "POST",
+        data: { answers: data.answers },
+      }),
+      invalidatesTags: ["QuizResult"],
+    }),
     
-    // deleteQuiz: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/quizzes/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: (result, error, id) => [{ type: "Quiz", id }],
-    // }),
-    
-    // searchQuizzesByTitle: builder.query({
-    //   query: (searchTerm) => ({
-    //     url: "/quizzes/search",
-    //     method: "GET",
-    //     params: { search: searchTerm },
-    //   }),
-    //   providesTags: ["Quiz"],
-    // }),
-    
-    // Quiz Results endpoints - TODO: Implement in backend
-    // submitQuizResult: builder.mutation({
-    //   query: (data) => ({
-    //     url: "/quiz-results/",
-    //     method: "POST",
-    //     data: data,
-    //   }),
-    //   invalidatesTags: ["QuizResult"],
-    // }),
-    
-    // getQuizResultsByStudent: builder.query({
-    //   query: (studentId) => ({
-    //     url: `/quiz-results/student/${studentId}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: ["QuizResult"],
-    // }),
-    
-    // getQuizResultsByQuiz: builder.query({
-    //   query: (quizId) => ({
-    //     url: `/quiz-results/quiz/${quizId}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: ["QuizResult"],
-    // }),
+    getQuizResult: builder.query({
+      query: (quizId) => ({
+        url: `/quizzes/${quizId}/result`,
+        method: "GET",
+      }),
+      providesTags: ["QuizResult"],
+    }),
   }),
 });
 
 export const {
   useAddQuizMutation,
   useGetAllQuizzesQuery,
+  useGetQuizByIdQuery,
   usePatchQuizMutation,
-  // TODO: Export other hooks when backend endpoints are implemented
-  // useGetQuizByIdQuery,
-  // useUpdateQuizMutation,
-  // useDeleteQuizMutation,
-  // useSearchQuizzesByTitleQuery,
-  // useSubmitQuizResultMutation,
-  // useGetQuizResultsByStudentQuery,
-  // useGetQuizResultsByQuizQuery,
+  useSubmitQuizResultMutation,
+  useGetQuizResultQuery,
 } = quizApi;

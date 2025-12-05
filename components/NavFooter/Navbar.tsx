@@ -19,31 +19,13 @@ export function NavbarDemo() {
   const navItems = [
     {
       name: "Home",
-      link: "#home",
+      link: "/",
     },
     {
-      name: "About",
-      link: "#about",
-    },
-    {
-      name: "Skills",
-      link: "#skills",
-    },
-    {
-      name: "Projects",
-      link: "#projects",
-    },
-    {
-      name: "Blogs",
-      link: "#blog",
-    },
-    {
-      name: "Experience",
-      link: "#experience",
+      name: "All Courses",
+      link: "/all-courses",
     },
   ];
-  const resumeLink =
-    "https://drive.google.com/file/d/1lBFZMJNUV-LiDfDIhm9ghs3sffHSakgz/view?usp=sharing";
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -53,8 +35,8 @@ export function NavbarDemo() {
   ) => {
     e.preventDefault();
 
-    if (window.location.pathname.startsWith("/blogs")) {
-      router.push(`/${link}`);
+    if (link.startsWith("/")) {
+      router.push(link);
       setIsMobileMenuOpen(false);
       return;
     }
@@ -71,7 +53,8 @@ export function NavbarDemo() {
     setIsMobileMenuOpen(false);
   };
 
-  const {data: me} = useGetMeQuery(undefined)
+  const {data: meData} = useGetMeQuery(undefined)
+  const me = meData as any;
   const [logout] = useLogoutMutation()
   const dispatch = useAppDispatch()
 
@@ -93,7 +76,7 @@ export function NavbarDemo() {
             {me ? (
               <>
                 <NavbarButton href="/dashboard" variant="secondary">
-                  Dashboard
+                  {me.role === "STUDENT" ? "Student Dashboard" : me.role === "ADMIN" ? "Admin Dashboard" : "Dashboard"}
                 </NavbarButton>
                 <NavbarButton
                   onClick={() => handleLogout()}
@@ -108,9 +91,6 @@ export function NavbarDemo() {
               </NavbarButton>
             )}
 
-            <NavbarButton target="_blank" href={resumeLink} variant="primary">
-              My Resume
-            </NavbarButton>
           </div>
         </NavBody>
 
@@ -142,7 +122,7 @@ export function NavbarDemo() {
               {me ? (
                 <>
                   <NavbarButton href="/dashboard" variant="secondary">
-                    Dashboard
+                    {me.role === "STUDENT" ? "Student Dashboard" : me.role === "ADMIN" ? "Admin Dashboard" : "Dashboard"}
                   </NavbarButton>
                   <NavbarButton
                     onClick={() => handleLogout()}
@@ -156,9 +136,6 @@ export function NavbarDemo() {
                   Login
                 </NavbarButton>
               )}
-              <NavbarButton target="_blank" href={resumeLink} variant="primary">
-                My Resume
-              </NavbarButton>
             </div>
           </MobileNavMenu>
         </MobileNav>

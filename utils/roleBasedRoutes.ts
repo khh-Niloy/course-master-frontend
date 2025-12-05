@@ -36,6 +36,10 @@ const routes = {
           title: "Add Assignment",
           url: "/dashboard/add-assignment",
         },
+        {
+          title: "Review Submissions",
+          url: "/dashboard/review-submissions",
+        },
       ],
     },
     {
@@ -75,10 +79,6 @@ const routes = {
         {
           title: "My Enrollments",
           url: "/dashboard/my-enrollments",
-        },
-        {
-          title: "My Progress",
-          url: "/dashboard/my-progress",
         },
       ],
     },

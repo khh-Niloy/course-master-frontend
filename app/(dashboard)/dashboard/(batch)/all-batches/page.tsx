@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useGetAllBatchesQuery } from "@/redux/features/batch/batch.api";
@@ -14,7 +13,6 @@ import Link from "next/link";
 
 export default function AllBatchesPage() {
   const [selectedCourse, setSelectedCourse] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { data: batchesData, isLoading: batchesLoading } = useGetAllBatchesQuery({});
   const { data: coursesData } = useGetAllCoursesQuery({});
@@ -22,15 +20,11 @@ export default function AllBatchesPage() {
   const batches = batchesData?.data || [];
   const courses = coursesData?.data || [];
 
-  // Filter batches based on selected course and search term
+  // Filter batches based on selected course
   const filteredBatches = batches.filter((batch: any) => {
     const matchesCourse = selectedCourse === "all" || batch.courseId._id === selectedCourse;
-    const matchesSearch = !searchTerm || 
-      batch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      batch.courseId.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `batch ${batch.batchNumber}`.toLowerCase().includes(searchTerm.toLowerCase());
     
-    return matchesCourse && matchesSearch;
+    return matchesCourse;
   });
 
   const formatDate = (dateString: string) => {
@@ -53,8 +47,8 @@ export default function AllBatchesPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl py-8">
-      <div className="space-y-6">
+    <div className="container mx-auto max-w-7xl py-4">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">All Batches</h1>
@@ -69,15 +63,6 @@ export default function AllBatchesPage() {
 
         {/* Filters */}
         <div className="flex gap-4 items-end">
-          <div className="flex-1">
-            <Label htmlFor="search">Search Batches</Label>
-            <Input
-              id="search"
-              placeholder="Search by batch name, course title, or batch number..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
           <div className="min-w-[200px]">
             <Label htmlFor="course-filter">Filter by Course</Label>
             <Select value={selectedCourse} onValueChange={setSelectedCourse}>
@@ -166,35 +151,6 @@ export default function AllBatchesPage() {
                 </Card>
               );
             })}
-          </div>
-        )}
-
-        {/* Summary */}
-        {batches.length > 0 && (
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium mb-2">Summary</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Total Batches</p>
-                <p className="font-semibold">{batches.length}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Showing</p>
-                <p className="font-semibold">{filteredBatches.length}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Upcoming</p>
-                <p className="font-semibold">
-                  {batches.filter((b: any) => new Date(b.startDate) > new Date()).length}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Ongoing</p>
-                <p className="font-semibold">
-                  {batches.filter((b: any) => new Date(b.startDate) <= new Date()).length}
-                </p>
-              </div>
-            </div>
           </div>
         )}
       </div>

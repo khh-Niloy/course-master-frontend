@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ChevronRight, Home } from "lucide-react";
+import Image from "next/image";
 
 import { SearchForm } from "@/components/search-form";
 import { VersionSwitcher } from "@/components/version-switcher";
@@ -28,7 +29,8 @@ import Link from "next/link";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: meResponse } = useGetMeQuery(undefined);
-  const userRole = meResponse?.role?.toLowerCase() as string;
+  const user = meResponse as any;
+  const userRole = user?.role?.toLowerCase() as string;
   const data = {
     navMain: roleBasedRoutes({ role: userRole }),
   };
@@ -38,9 +40,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild size="lg">
-              <a href="/" className="flex items-center gap-2">
-                <Home className="h-5 w-5" />
-                <span className="font-semibold">Go to Home</span>
+              <a href="/" className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
+                  <Image
+                    src="/logo-icon.svg"
+                    alt="Course Master Logo"
+                    width={32}
+                    height={32}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="font-semibold text-sm">Course Master</span>
+                  <span className="text-xs text-muted-foreground">Go to Home</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

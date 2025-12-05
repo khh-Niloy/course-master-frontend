@@ -75,7 +75,7 @@ export default function AddBatchPage() {
               </SelectTrigger>
               <SelectContent>
                 {courses.length > 0 ? (
-                  courses.map((course) => (
+                  courses.map((course: { _id: string; title: string }) => (
                     <SelectItem key={course._id} value={course._id}>
                       {course.title}
                     </SelectItem>
@@ -144,7 +144,7 @@ export default function AddBatchPage() {
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <h3 className="font-medium text-blue-900 mb-2">Selected Course Info:</h3>
               <p className="text-blue-800 text-sm">
-                Course: {courses.find(c => c._id === selectedCourseId)?.title}
+                Course: {courses.find((c: { _id: string; title: string }) => c._id === selectedCourseId)?.title}
               </p>
               <p className="text-blue-800 text-sm">
                 This batch will be created for the selected course and students can enroll in this specific batch.

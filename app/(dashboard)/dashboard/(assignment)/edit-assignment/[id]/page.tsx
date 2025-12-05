@@ -140,7 +140,10 @@ export default function EditAssignmentPage() {
 
           <div className="space-y-2">
             <Label htmlFor="type">Assignment Type</Label>
-            <Select onValueChange={(value) => setValue("type", value as "drive_link" | "text")}>
+            <Select 
+              value={selectedType || ""} 
+              onValueChange={(value) => setValue("type", value as "drive_link" | "text")}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select assignment type" />
               </SelectTrigger>

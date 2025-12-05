@@ -252,7 +252,6 @@ export default function AddCoursePage() {
 
           {/* Note: Batches are now managed separately in Batch Management */}
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-medium text-yellow-900 mb-2">📅 Batch Management</h3>
             <p className="text-yellow-800 text-sm">
               After creating this course, you can create batches for it in the{" "}
               <Link href="/dashboard/add-batch" className="underline font-medium">
@@ -532,8 +531,8 @@ export default function AddCoursePage() {
                         <SelectContent>
                           {quizzes.length > 0 ? (
                             quizzes
-                              .filter(quiz => !moduleQuizIds[moduleIndex]?.includes(quiz._id))
-                              .map((quiz) => (
+                              .filter((quiz: { _id: string; title: string }) => !moduleQuizIds[moduleIndex]?.includes(quiz._id))
+                              .map((quiz: { _id: string; title: string }) => (
                                 <SelectItem key={quiz._id} value={quiz._id}>
                                   {quiz.title}
                                 </SelectItem>
@@ -561,7 +560,7 @@ export default function AddCoursePage() {
                       <div className="space-y-2">
                         <Label className="text-sm">Selected Quizzes:</Label>
                         {moduleQuizIds[moduleIndex].map((quizId) => {
-                          const quiz = quizzes.find(q => q._id === quizId);
+                          const quiz = quizzes.find((q: { _id: string; title: string }) => q._id === quizId);
                           return (
                             <div key={quizId} className="flex items-center gap-2 p-2 bg-green-50 rounded">
                               <span className="flex-1 text-sm">
@@ -600,7 +599,7 @@ export default function AddCoursePage() {
                         <SelectContent>
                           <SelectItem value="none">No assignment</SelectItem>
                           {assignments.length > 0 ? (
-                            assignments.map((assignment) => (
+                            assignments.map((assignment: { _id: string; title: string; type: string }) => (
                               <SelectItem key={assignment._id} value={assignment._id}>
                                 {assignment.title} ({assignment.type})
                               </SelectItem>
@@ -629,7 +628,7 @@ export default function AddCoursePage() {
                         <Label className="text-sm">Selected Assignment:</Label>
                         <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
                           <span className="flex-1 text-sm">
-                            {assignments.find(a => a._id === moduleAssignmentId[moduleIndex])?.title || 
+                            {assignments.find((a: { _id: string; title: string; type: string }) => a._id === moduleAssignmentId[moduleIndex])?.title || 
                              `Assignment ID: ${moduleAssignmentId[moduleIndex]}`}
                           </span>
                           <Button

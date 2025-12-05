@@ -41,9 +41,12 @@ export default function EditBatchPage() {
     formState: { errors, dirtyFields, isDirty },
     reset,
     setValue,
+    watch,
   } = useForm<BatchPatchData>({
     resolver: zodResolver(batchPatchSchema),
   });
+
+  const selectedCourseId = watch("courseId");
 
   useEffect(() => {
     if (batch) {
@@ -106,7 +109,10 @@ export default function EditBatchPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="courseId">Course</Label>
-            <Select onValueChange={(value) => setValue("courseId", value)}>
+            <Select 
+              value={selectedCourseId || ""} 
+              onValueChange={(value) => setValue("courseId", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select a course" />
               </SelectTrigger>

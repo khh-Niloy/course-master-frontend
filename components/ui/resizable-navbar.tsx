@@ -9,7 +9,7 @@ import {
 } from "framer-motion";
 
 import React, { useRef, useState } from "react";
-// import Image from "next/image";
+import Image from "next/image";
 
 
 interface NavbarProps {
@@ -103,8 +103,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         minWidth: "800px",
       }}
       className={cn(
-        "relative z-[50] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-black text-white px-4 py-2 lg:flex",
-        visible && "bg-black/90",
+        "relative z-[50] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-[#1FB67A] text-white px-4 py-1 lg:flex",
+        visible && "bg-[#1FB67A]/95",
         className,
       )}
     >
@@ -128,14 +128,14 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={(e) => onItemClick?.(e, item.link)}
-          className="relative z-[50] px-4 py-2 text-white hover:text-white pointer-events-auto"
+          className="relative z-[50] px-3 py-1 text-white hover:text-white pointer-events-auto text-sm"
           key={`link-${idx}`}
           href={item.link}
         >
           {hovered === idx && (
             <motion.div
               layoutId="hovered"
-              className="absolute inset-0 text-white h-full w-full rounded-full bg-gray-800"
+              className="absolute inset-0 text-white h-full w-full rounded-full bg-white/20"
             />
           )}
           <span className="relative z-20">{item.name}</span>
@@ -165,8 +165,8 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 50,
       }}
       className={cn(
-        "relative z-[50] mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-black/80 px-0 py-2 lg:hidden",
-        visible && "bg-black/90",
+        "relative z-[50] mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-[#1FB67A] px-0 py-1 lg:hidden",
+        visible && "bg-[#1FB67A]/95",
         className,
       )}
     >
@@ -205,7 +205,7 @@ export const MobileNavMenu: React.FC<MobileNavMenuProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-[50] flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-black px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
+            "absolute inset-x-0 top-16 z-[50] flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-[#1FB67A] px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
             className,
           )}
         >
@@ -233,10 +233,25 @@ export const MobileNavToggle = ({
 export const NavbarLogo = () => {
   return (
     <a
-      href="#"
-      className="relative z-[50] mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-white"
+      href="/"
+      className="relative z-[50] mr-4 flex items-center space-x-2 px-2 py-0.5 text-sm font-normal text-white group"
     >
-      <span className="font-bold text-white">Niloy</span>
+      <div className="flex items-center space-x-2">
+        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shadow-lg group-hover:bg-white/20 transition-all group-hover:scale-105 overflow-hidden">
+          <Image
+            src="/logo-icon.svg"
+            alt="Course Master Logo"
+            width={32}
+            height={32}
+            className="w-full h-full object-contain"
+            priority
+          />
+        </div>
+        <div className="flex flex-col">
+          <span className="font-bold text-white text-sm leading-tight">Course</span>
+          <span className="text-white/80 text-[10px] leading-tight font-medium">Master</span>
+        </div>
+      </div>
     </a>
   );
 };
@@ -261,7 +276,7 @@ export const NavbarButton = ({
   | React.ComponentPropsWithoutRef<"button">
 )) => {
   const baseStyles =
-    "px-4 py-2 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
+    "px-3 py-1.5 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
 
   const variantStyles = {
     primary:

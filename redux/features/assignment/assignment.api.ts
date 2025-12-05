@@ -32,49 +32,58 @@ export const assignmentApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, { id }) => [{ type: "Assignment", id }, "Assignment"],
     }),
     
-    // getAssignmentById: builder.query({
-    //   query: (id) => ({
-    //     url: `/assignments/${id}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: (result, error, id) => [{ type: "Assignment", id }],
-    // }),
+    getAssignmentById: builder.query({
+      query: (id) => ({
+        url: `/assignments/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Assignment", id }],
+    }),
     
-    // updateAssignment: builder.mutation({
-    //   query: ({ id, data }) => ({
-    //     url: `/assignments/${id}`,
-    //     method: "PUT",
-    //     data: data,
-    //   }),
-    //   invalidatesTags: (result, error, { id }) => [{ type: "Assignment", id }],
-    // }),
+    submitAssignment: builder.mutation({
+      query: (data) => ({
+        url: `/assignments/${data.assignmentId}/submit`,
+        method: "POST",
+        data: { submission: data.submission },
+      }),
+      invalidatesTags: ["AssignmentSubmission"],
+    }),
     
-    // deleteAssignment: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/assignments/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: (result, error, id) => [{ type: "Assignment", id }],
-    // }),
+    getAssignmentSubmission: builder.query({
+      query: (assignmentId) => ({
+        url: `/assignments/${assignmentId}/submission`,
+        method: "GET",
+      }),
+      providesTags: ["AssignmentSubmission"],
+    }),
     
-    // searchAssignmentsByTitle: builder.query({
-    //   query: (searchTerm) => ({
-    //     url: "/assignments/search",
-    //     method: "GET",
-    //     params: { search: searchTerm },
-    //   }),
-    //   providesTags: ["Assignment"],
-    // }),
+    getAllSubmissions: builder.query({
+      query: (params = {}) => ({
+        url: "/assignments/submissions/all",
+        method: "GET",
+        params: params,
+      }),
+      providesTags: ["AssignmentSubmission"],
+    }),
+    
+    reviewAssignment: builder.mutation({
+      query: ({ submissionId, data }) => ({
+        url: `/assignments/submissions/${submissionId}/review`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: ["AssignmentSubmission"],
+    }),
   }),
 });
 
 export const {
   useAddAssignmentMutation,
   useGetAllAssignmentsQuery,
+  useGetAssignmentByIdQuery,
   usePatchAssignmentMutation,
-  // TODO: Export other hooks when backend endpoints are implemented
-  // useGetAssignmentByIdQuery,
-  // useUpdateAssignmentMutation,
-  // useDeleteAssignmentMutation,
-  // useSearchAssignmentsByTitleQuery,
+  useSubmitAssignmentMutation,
+  useGetAssignmentSubmissionQuery,
+  useGetAllSubmissionsQuery,
+  useReviewAssignmentMutation,
 } = assignmentApi;

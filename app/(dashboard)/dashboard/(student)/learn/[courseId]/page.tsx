@@ -31,9 +31,10 @@ export default function CourseLearnPage() {
 
   const { data: meData } = useGetMeQuery(undefined);
   const { data: courseData, isLoading: courseLoading } = useGetCourseByIdQuery(courseSlug);
+  const user = meData as any;
   const { data: enrollmentsData } = useGetEnrollmentsByStudentQuery(
-    meData?._id,
-    { skip: !meData?._id }
+    user?._id,
+    { skip: !user?._id }
   );
 
   const course = courseData?.data;
@@ -83,6 +84,25 @@ export default function CourseLearnPage() {
   const calculateOverallProgress = () => {
     if (!currentEnrollment?.progress) return 0;
     return currentEnrollment.progress.progressPercentage;
+  };
+
+  // Helper function to extract YouTube video ID from URL
+  const getYouTubeVideoId = (url: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Helper function to format duration in minutes
+  const formatDuration = (minutes: number) => {
+    if (!minutes) return "N/A";
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
   };
 
   if (courseLoading) {
@@ -254,36 +274,84 @@ export default function CourseLearnPage() {
                     
                     <TabsContent value="lessons" className="space-y-4">
                       {course.modules[selectedModule].lessons?.length > 0 ? (
-                        course.modules[selectedModule].lessons.map((lesson: any, lessonIndex: number) => (
-                          <Card key={lesson._id} className="hover:shadow-md transition-shadow">
-                            <CardContent className="p-4">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <div className="flex-shrink-0">
-                                    {completedLessonIds.has(lesson._id) ? (
-                                      <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                                    ) : (
-                                      <PlayCircleIcon className="h-6 w-6 text-gray-400" />
-                                    )}
+                        course.modules[selectedModule].lessons.map((lesson: any, lessonIndex: number) => {
+                          const videoId = lesson.videoUrl ? getYouTubeVideoId(lesson.videoUrl) : null;
+                          return (
+                            <Card key={lesson._id} className="hover:shadow-md transition-shadow">
+                              <CardContent className="p-6">
+                                <div className="space-y-4">
+                                  {/* Lesson Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3 flex-1">
+                                      <div className="flex-shrink-0">
+                                        {completedLessonIds.has(lesson._id) ? (
+                                          <CheckCircleIcon className="h-6 w-6 text-green-500" />
+                                        ) : (
+                                          <PlayCircleIcon className="h-6 w-6 text-gray-400" />
+                                        )}
+                                      </div>
+                                      <div className="flex-1">
+                                        <h4 className="font-medium text-lg">{lesson.title}</h4>
+                                        {lesson.duration && (
+                                          <div className="flex items-center gap-1 mt-1 text-sm text-gray-600">
+                                            <ClockIcon className="h-4 w-4" />
+                                            <span>{formatDuration(lesson.duration)}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Button
+                                        variant={completedLessonIds.has(lesson._id) ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => toggleLessonComplete(lesson._id)}
+                                      >
+                                        {completedLessonIds.has(lesson._id) ? "Completed" : "Mark Complete"}
+                                      </Button>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <h4 className="font-medium">{lesson.title}</h4>
-                                    <p className="text-sm text-gray-600">{lesson.content}</p>
-                                  </div>
+
+                                  {/* Video Player */}
+                                  {videoId && (
+                                    <div className="mt-4">
+                                      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                                        <iframe
+                                          className="absolute top-0 left-0 w-full h-full rounded-lg"
+                                          src={`https://www.youtube.com/embed/${videoId}`}
+                                          title={lesson.title}
+                                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                          allowFullScreen
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Video URL as fallback if not YouTube */}
+                                  {lesson.videoUrl && !videoId && (
+                                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                                      <p className="text-sm text-gray-600 mb-2">Video URL:</p>
+                                      <a
+                                        href={lesson.videoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline break-all"
+                                      >
+                                        {lesson.videoUrl}
+                                      </a>
+                                    </div>
+                                  )}
+
+                                  {/* Lesson Content */}
+                                  {lesson.content && (
+                                    <div className="mt-4 pt-4 border-t">
+                                      <p className="text-sm text-gray-600">{lesson.content}</p>
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    variant={completedLessonIds.has(lesson._id) ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => toggleLessonComplete(lesson._id)}
-                                  >
-                                    {completedLessonIds.has(lesson._id) ? "Completed" : "Mark Complete"}
-                                  </Button>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))
+                              </CardContent>
+                            </Card>
+                          );
+                        })
                       ) : (
                         <div className="text-center py-8 text-gray-500">
                           <BookOpenIcon className="h-12 w-12 mx-auto mb-2 text-gray-300" />
@@ -305,9 +373,11 @@ export default function CourseLearnPage() {
                                     <p className="text-sm text-gray-600">Test your knowledge</p>
                                   </div>
                                 </div>
-                                <Button variant="outline" size="sm">
-                                  Take Quiz
-                                </Button>
+                                <Link href={`/dashboard/take-quiz/${quizId}`}>
+                                  <Button variant="outline" size="sm">
+                                    Take Quiz
+                                  </Button>
+                                </Link>
                               </div>
                             </CardContent>
                           </Card>
@@ -332,9 +402,11 @@ export default function CourseLearnPage() {
                                   <p className="text-sm text-gray-600">Complete the assignment to progress</p>
                                 </div>
                               </div>
-                              <Button variant="outline" size="sm">
-                                View Assignment
-                              </Button>
+                              <Link href={`/dashboard/submit-assignment/${course.modules[selectedModule].assignmentId}`}>
+                                <Button variant="outline" size="sm">
+                                  View Assignment
+                                </Button>
+                              </Link>
                             </div>
                           </CardContent>
                         </Card>

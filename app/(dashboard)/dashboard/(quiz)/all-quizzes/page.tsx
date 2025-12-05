@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useGetAllQuizzesQuery } from "@/redux/features/quiz/quiz.api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,21 +9,9 @@ import Link from "next/link";
 import { HelpCircleIcon, CalendarIcon, CheckCircleIcon } from "lucide-react";
 
 export default function AllQuizzesPage() {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
   const { data: quizzesData, isLoading: quizzesLoading } = useGetAllQuizzesQuery({});
 
   const quizzes = quizzesData?.data || [];
-
-  const filteredQuizzes = quizzes.filter((quiz: any) => {
-    const matchesSearch = !searchTerm || 
-      quiz.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quiz.questions?.some((q: any) => 
-        q.question?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    
-    return matchesSearch;
-  });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -45,8 +32,8 @@ export default function AllQuizzesPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl py-8">
-      <div className="space-y-6">
+    <div className="container mx-auto max-w-7xl py-4">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">All Quizzes</h1>
@@ -59,39 +46,23 @@ export default function AllQuizzesPage() {
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="flex gap-4 items-end">
-          <div className="flex-1">
-            <Input
-              placeholder="Search quizzes by title or question content..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
         {/* Quizzes Grid */}
         {quizzesLoading ? (
           <div className="text-center py-8">
             <p>Loading quizzes...</p>
           </div>
-        ) : filteredQuizzes.length === 0 ? (
+        ) : quizzes.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">
-              {quizzes.length === 0 
-                ? "No quizzes found. Create your first quiz!" 
-                : "No quizzes match your search criteria."
-              }
+              No quizzes found. Create your first quiz!
             </p>
-            {quizzes.length === 0 && (
-              <Link href="/dashboard/add-quiz">
-                <Button className="mt-4">Create First Quiz</Button>
-              </Link>
-            )}
+            <Link href="/dashboard/add-quiz">
+              <Button className="mt-4">Create First Quiz</Button>
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredQuizzes.map((quiz: any) => (
+            {quizzes.map((quiz: any) => (
               <Card key={quiz._id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-lg line-clamp-2">
@@ -143,38 +114,6 @@ export default function AllQuizzesPage() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-        )}
-
-        {/* Summary */}
-        {quizzes.length > 0 && (
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium mb-2">Summary</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Total Quizzes</p>
-                <p className="font-semibold">{quizzes.length}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Showing</p>
-                <p className="font-semibold">{filteredQuizzes.length}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Total Questions</p>
-                <p className="font-semibold">
-                  {quizzes.reduce((total: number, q: any) => total + getTotalQuestions(q), 0)}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Avg Questions/Quiz</p>
-                <p className="font-semibold">
-                  {quizzes.length > 0 
-                    ? Math.round((quizzes.reduce((total: number, q: any) => total + getTotalQuestions(q), 0) / quizzes.length) * 10) / 10
-                    : 0
-                  }
-                </p>
-              </div>
-            </div>
           </div>
         )}
       </div>

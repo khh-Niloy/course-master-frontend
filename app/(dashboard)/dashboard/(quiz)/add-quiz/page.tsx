@@ -86,7 +86,7 @@ export default function AddQuizPage() {
       console.log("Form submitted with data:", JSON.stringify(data, null, 2));
       
       // Check if at least one option is marked as correct for each question
-      const validationErrors = [];
+      const validationErrors: string[] = [];
       data.questions.forEach((question, qIndex) => {
         const hasCorrectAnswer = question.options.some(option => option.isCorrect);
         if (!hasCorrectAnswer) {

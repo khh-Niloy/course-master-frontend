@@ -29,15 +29,6 @@ export const courseApi = baseApi.injectEndpoints({
       providesTags: (result, error, slug) => [{ type: "Course", id: slug }],
     }),
 
-    updateCourse: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/courses/${id}`,
-        method: "PUT",
-        data: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Course", id }],
-    }),
-
     patchCourse: builder.mutation({
       query: ({ slug, data }) => ({
         url: `/courses/${slug}`,
@@ -61,7 +52,6 @@ export const {
   useAddCourseMutation,
   useGetAllCoursesQuery,
   useGetCourseByIdQuery,
-  useUpdateCourseMutation,
   usePatchCourseMutation,
   useDeleteCourseMutation,
 } = courseApi;

@@ -1,37 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGetAllEnrollmentsQuery } from "@/redux/features/enrollment/enrollment.api";
-import { useGetAllCoursesQuery } from "@/redux/features/course/course.api";
-import { BookOpenIcon, CalendarIcon, UserIcon, ClockIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function AllEnrollmentsPage() {
-  const [selectedCourse, setSelectedCourse] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
   const { data: enrollmentsData, isLoading: enrollmentsLoading } = useGetAllEnrollmentsQuery({});
-  const { data: coursesData } = useGetAllCoursesQuery({});
 
   const enrollments = enrollmentsData?.data || [];
-  const courses = coursesData?.data || [];
 
-  // Filter enrollments based on selected course and search term
-  const filteredEnrollments = enrollments.filter((enrollment: any) => {
-    const matchesCourse = selectedCourse === "all" || enrollment.courseId._id === selectedCourse;
-    const matchesSearch = !searchTerm || 
-      enrollment.studentId.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enrollment.studentId.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enrollment.courseId.title?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    return matchesCourse && matchesSearch;
-  });
+  // Group enrollments by course
+  const groupedEnrollments = enrollments.reduce((acc: any, enrollment: any) => {
+    const courseId = enrollment.courseId._id;
+    if (!acc[courseId]) {
+      acc[courseId] = {
+        course: enrollment.courseId,
+        enrollments: []
+      };
+    }
+    acc[courseId].enrollments.push(enrollment);
+    return acc;
+  }, {});
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -53,7 +45,7 @@ export default function AllEnrollmentsPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl py-8">
+    <div className="container mx-auto max-w-7xl px-4 py-6">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -67,110 +59,103 @@ export default function AllEnrollmentsPage() {
           </Link>
         </div>
 
-        {/* Filters */}
-        <div className="flex gap-4 items-end">
-          <div className="flex-1">
-            <Label htmlFor="search">Search Enrollments</Label>
-            <Input
-              id="search"
-              placeholder="Search by student name, email, or course title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="min-w-[200px]">
-            <Label htmlFor="course-filter">Filter by Course</Label>
-            <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-              <SelectTrigger>
-                <SelectValue placeholder="All courses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All courses</SelectItem>
-                {courses.map((course: any) => (
-                  <SelectItem key={course._id} value={course._id}>
-                    {course.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Enrollments Grid */}
+        {/* Enrollments Table */}
         {enrollmentsLoading ? (
           <div className="text-center py-8">
             <p>Loading enrollments...</p>
           </div>
-        ) : filteredEnrollments.length === 0 ? (
+        ) : enrollments.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">
-              {enrollments.length === 0 
-                ? "No enrollments found." 
-                : "No enrollments match your search criteria."
-              }
+              No enrollments found.
             </p>
-            {enrollments.length === 0 && (
-              <Link href="/dashboard/add-enrollment">
-                <Button className="mt-4">Create First Enrollment</Button>
-              </Link>
-            )}
+            <Link href="/dashboard/add-enrollment">
+              <Button className="mt-4">Create First Enrollment</Button>
+            </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEnrollments.map((enrollment: any) => {
-              const { status, variant } = getBatchStatus(enrollment.batchId.startDate);
-              
-              return (
-                <Card key={enrollment._id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <Badge variant={variant}>{status}</Badge>
-                      <span className="text-xs text-gray-500">
-                        #{enrollment.batchId.batchNumber}
-                      </span>
-                    </div>
-                    <CardTitle className="text-lg">
-                      {enrollment.courseId.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {enrollment.batchId.name || `Batch ${enrollment.batchId.batchNumber}`}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <UserIcon className="h-4 w-4" />
-                      <div>
-                        <p className="font-medium">{enrollment.studentId.name}</p>
-                        <p className="text-xs text-gray-500">{enrollment.studentId.email}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <CalendarIcon className="h-4 w-4" />
-                      <span>Starts: {formatDate(enrollment.batchId.startDate)}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <ClockIcon className="h-4 w-4" />
-                      <span>Enrolled: {formatDate(enrollment.enrollmentDate)}</span>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <div className="w-full text-center text-xs text-gray-500">
-                      Enrollment ID: {enrollment._id}
-                    </div>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
+          <Card>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="text-left p-4 font-semibold">Student</th>
+                    <th className="text-left p-4 font-semibold">Email</th>
+                    <th className="text-left p-4 font-semibold">Batch</th>
+                    <th className="text-left p-4 font-semibold">Batch Start Date</th>
+                    <th className="text-left p-4 font-semibold">Enrollment Date</th>
+                    <th className="text-left p-4 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.values(groupedEnrollments).map((group: any) => (
+                    <React.Fragment key={group.course._id}>
+                      {/* Course Header Row */}
+                      <tr className="bg-muted/70 border-b-2 border-primary/20">
+                        <td colSpan={6} className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-lg font-bold">{group.course.title}</h3>
+                              {group.course.description && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {group.course.description}
+                                </p>
+                              )}
+                            </div>
+                            <Badge variant="outline" className="ml-4">
+                              {group.enrollments.length} {group.enrollments.length === 1 ? 'Enrollment' : 'Enrollments'}
+                            </Badge>
+                          </div>
+                        </td>
+                      </tr>
+                      {/* Enrollments for this course */}
+                      {group.enrollments.map((enrollment: any) => {
+                        const { status, variant } = getBatchStatus(enrollment.batchId.startDate);
+                        
+                        return (
+                          <tr 
+                            key={enrollment._id} 
+                            className="border-b hover:bg-muted/30 transition-colors"
+                          >
+                            <td className="p-4">
+                              <div className="font-medium">{enrollment.studentId.name || "N/A"}</div>
+                            </td>
+                            <td className="p-4">
+                              <div className="text-sm text-muted-foreground">
+                                {enrollment.studentId.email || "N/A"}
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="text-sm">
+                                {enrollment.batchId.name || `Batch ${enrollment.batchId.batchNumber}`}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                #{enrollment.batchId.batchNumber}
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="text-sm">{formatDate(enrollment.batchId.startDate)}</div>
+                            </td>
+                            <td className="p-4">
+                              <div className="text-sm">{formatDate(enrollment.enrollmentDate)}</div>
+                            </td>
+                            <td className="p-4">
+                              <Badge variant={variant}>{status}</Badge>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         )}
 
         {/* Summary Stats */}
         {enrollments.length > 0 && (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-2xl font-bold text-blue-600">
