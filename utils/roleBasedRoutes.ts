@@ -22,10 +22,6 @@ const routes = {
           title: "All Enrollments",
           url: "/dashboard/all-enrollments",
         },
-        {
-          title: "Add Enrollment",
-          url: "/dashboard/add-enrollment",
-        },
       ],
     },
     {

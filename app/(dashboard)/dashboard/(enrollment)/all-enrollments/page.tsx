@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGetAllEnrollmentsQuery } from "@/redux/features/enrollment/enrollment.api";
 import { useGetAllCoursesQuery } from "@/redux/features/course/course.api";
@@ -13,7 +13,7 @@ import { BookOpenIcon, CalendarIcon, UserIcon, ClockIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function AllEnrollmentsPage() {
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedCourse, setSelectedCourse] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { data: enrollmentsData, isLoading: enrollmentsLoading } = useGetAllEnrollmentsQuery({});
@@ -24,7 +24,7 @@ export default function AllEnrollmentsPage() {
 
   // Filter enrollments based on selected course and search term
   const filteredEnrollments = enrollments.filter((enrollment: any) => {
-    const matchesCourse = !selectedCourse || enrollment.courseId._id === selectedCourse;
+    const matchesCourse = selectedCourse === "all" || enrollment.courseId._id === selectedCourse;
     const matchesSearch = !searchTerm || 
       enrollment.studentId.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       enrollment.studentId.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,7 +85,7 @@ export default function AllEnrollmentsPage() {
                 <SelectValue placeholder="All courses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All courses</SelectItem>
+                <SelectItem value="all">All courses</SelectItem>
                 {courses.map((course: any) => (
                   <SelectItem key={course._id} value={course._id}>
                     {course.title}

@@ -21,6 +21,16 @@ export const quizApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Quiz"],
     }),
+
+    // PATCH endpoint for partially updating quiz
+    patchQuiz: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/quizzes/${id}`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Quiz", id }, "Quiz"],
+    }),
     
     // getQuizById: builder.query({
     //   query: (id) => ({
@@ -87,6 +97,7 @@ export const quizApi = baseApi.injectEndpoints({
 export const {
   useAddQuizMutation,
   useGetAllQuizzesQuery,
+  usePatchQuizMutation,
   // TODO: Export other hooks when backend endpoints are implemented
   // useGetQuizByIdQuery,
   // useUpdateQuizMutation,

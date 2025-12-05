@@ -10,7 +10,7 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Course"],
     }),
-    
+
     getAllCourses: builder.query({
       query: (params = {}) => ({
         url: "/courses/",
@@ -19,7 +19,7 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Course"],
     }),
-    
+
     // Note: This function uses course slug, not ID (backend route expects slug)
     getCourseById: builder.query({
       query: (slug) => ({
@@ -28,7 +28,7 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, slug) => [{ type: "Course", id: slug }],
     }),
-    
+
     updateCourse: builder.mutation({
       query: ({ id, data }) => ({
         url: `/courses/${id}`,
@@ -37,7 +37,16 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "Course", id }],
     }),
-    
+
+    patchCourse: builder.mutation({
+      query: ({ slug, data }) => ({
+        url: `/courses/${slug}`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: (result, error, { slug }) => [{ type: "Course", id: slug }, "Course"],
+    }),
+
     deleteCourse: builder.mutation({
       query: (id) => ({
         url: `/courses/${id}`,
@@ -53,5 +62,6 @@ export const {
   useGetAllCoursesQuery,
   useGetCourseByIdQuery,
   useUpdateCourseMutation,
+  usePatchCourseMutation,
   useDeleteCourseMutation,
 } = courseApi;

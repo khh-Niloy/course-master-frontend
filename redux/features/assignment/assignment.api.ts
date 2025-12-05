@@ -21,6 +21,16 @@ export const assignmentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Assignment"],
     }),
+
+    // PATCH endpoint for partially updating assignment
+    patchAssignment: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/assignments/${id}`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Assignment", id }, "Assignment"],
+    }),
     
     // getAssignmentById: builder.query({
     //   query: (id) => ({
@@ -61,6 +71,7 @@ export const assignmentApi = baseApi.injectEndpoints({
 export const {
   useAddAssignmentMutation,
   useGetAllAssignmentsQuery,
+  usePatchAssignmentMutation,
   // TODO: Export other hooks when backend endpoints are implemented
   // useGetAssignmentByIdQuery,
   // useUpdateAssignmentMutation,

@@ -31,6 +31,16 @@ export const batchApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, courseId) => [{ type: "Batch", id: courseId }],
     }),
+
+    // PATCH endpoint for partially updating batch
+    patchBatch: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/batches/${id}`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Batch", id }, "Batch"],
+    }),
   }),
 });
 
@@ -38,4 +48,5 @@ export const {
   useAddBatchMutation,
   useGetAllBatchesQuery,
   useGetBatchesByCourseQuery,
+  usePatchBatchMutation,
 } = batchApi;

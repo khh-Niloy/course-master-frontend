@@ -13,7 +13,7 @@ import { CalendarIcon, BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function AllBatchesPage() {
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedCourse, setSelectedCourse] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { data: batchesData, isLoading: batchesLoading } = useGetAllBatchesQuery({});
@@ -24,7 +24,7 @@ export default function AllBatchesPage() {
 
   // Filter batches based on selected course and search term
   const filteredBatches = batches.filter((batch: any) => {
-    const matchesCourse = !selectedCourse || batch.courseId._id === selectedCourse;
+    const matchesCourse = selectedCourse === "all" || batch.courseId._id === selectedCourse;
     const matchesSearch = !searchTerm || 
       batch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       batch.courseId.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,7 +85,7 @@ export default function AllBatchesPage() {
                 <SelectValue placeholder="All courses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All courses</SelectItem>
+                <SelectItem value="all">All courses</SelectItem>
                 {courses.map((course: any) => (
                   <SelectItem key={course._id} value={course._id}>
                     {course.title}
@@ -153,6 +153,14 @@ export default function AllBatchesPage() {
                       <p className="text-xs text-muted-foreground">
                         Created: {formatDate(batch.createdAt)}
                       </p>
+                    </div>
+                    
+                    <div className="pt-2 flex gap-2">
+                      <Link href={`/dashboard/edit-batch/${batch._id}`} className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full">
+                          Edit
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
