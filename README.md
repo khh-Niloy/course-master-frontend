@@ -6,6 +6,17 @@ A modern Learning Management System (LMS) frontend for managing courses, batches
 
 Course Master addresses the need for educational institutions and instructors to efficiently manage their online learning programs. It streamlines course delivery, student enrollment, assignment submission, and quiz administration in a single platform.
 
+## Live Demo
+
+**Live Site:** https://course-master-frontend-pi.vercel.app/
+
+### Test Credentials
+
+For testing purposes, you can use the following admin credentials:
+
+- **Email:** `khhniloy0@gmail.com`
+- **Password:** `12345678`
+
 ## Key Features
 
 - **Course Management** - Create, edit, and organize courses with modules
@@ -51,8 +62,23 @@ npm install
 3. Set up environment variables:
 Create a `.env.local` file in the root directory with your API configuration:
 ```env
-NEXT_PUBLIC_API_URL=your-api-url
+NEXT_PUBLIC_BASE_URL=your-api-url
 ```
+
+## Environment Variables
+
+The following environment variables are required for the application to run:
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_BASE_URL` | Base URL for the backend API | Yes |
+
+**Example:**
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:8000/api
+```
+
+> **Note:** Create a `.env.local` file in the root directory to store your environment variables. This file should not be committed to version control.
 
 4. Run the development server:
 ```bash
